@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Отслеживание посылки</title>
+</head>
+<body>
+  <h2>Создать посылку</h2>
+  <input placeholder="ФИО" id="fio"><br>
+  <input placeholder="Адрес" id="address"><br>
+  <input placeholder="Телефон" id="phone"><br>
+  <input placeholder="Описание посылки" id="info"><br>
+  <button onclick="createParcel()">Создать</button>
+  <p id="created"></p>
+
+  <hr>
+
+  <h2>Отследить посылку</h2>
+  <input placeholder="Введите трек-код" id="track"><br>
+  <button onclick="trackParcel()">Отследить</button>
+  <pre id="result"></pre>
+
+  <script>
+    async function createParcel() {
+      const data = {
+        fio: document.getElementById('fio').value,
+        address: document.getElementById('address').value,
+        phone: document.getElementById('phone').value,
+        info: document.getElementById('info').value,
+      };
+
+      const response = await fetch('/create', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(data)
+      });
+
+      const result = await response.json();
+      document.getElementById('created').innerText = "Трек-код: " + result.track_code;
+    }
+
+    async function trackParcel() {
+      const code = document.getElementById('track').value;
+      const response = await fetch('/track/' + code);
+      const result = await response.json();
+      document.getElementById('result').innerText = JSON.stringify(result, null, 2);
+    }
+  </script>
+</body>
+</html>
